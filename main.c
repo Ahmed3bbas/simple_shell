@@ -42,8 +42,10 @@ int main(void)
 			str[bytes_read - 1] = '\0';
 
 		if (strcmp(str, "exit") == 0)
-			break;
-
+		{
+			free(str);
+			exit(EXIT_SUCCESS);
+		}
 		/* process input*/
 		str_copy = strdup(str);
 
