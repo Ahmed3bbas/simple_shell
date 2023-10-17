@@ -91,10 +91,14 @@ void run(char *command, char *str, char *environ[])
 	pid_t pid;
 	int i;
 	char **newargv;
+	char *command_path;
+	const int MAX_PATH_LENGTH = 256;
 
 	newargv = get_args(str);
+	command_path = malloc(sizeof(char) * MAX_PATH_LENGTH);
+	strcpy(command_path, command);
 
-	if (is_command_exist(command, environ) == 0)
+	if (is_command_exist(command_path, environ) == 0)
 	{
 		pid = fork();
 		if (pid == -1)
@@ -107,8 +111,8 @@ void run(char *command, char *str, char *environ[])
 
 			if (newargv != NULL)
 			{
-				/*printf("%s\n", command);*/
-				if (execve(command, newargv, environ) == -1)
+				/*printf("%s\n", command_path);*/
+				if (execve(command_path, newargv, environ) == -1)
 				{
 					perror("Error");
 					free(newargv);
@@ -137,10 +141,12 @@ void run(char *command, char *str, char *environ[])
 				}
 				free(newargv);
 			}
+			free(command_path);
 		}
 	}
 	else
 	{
-		fprintf(stderr, "Command '%s' not found\n", command);
+		fprintf(stderr, "Command '%s' not found\n", command_path);
+		free(command_path);
 	}
 }
