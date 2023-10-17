@@ -21,12 +21,20 @@ int main(void)
 
 	while (1)
 	{
-		printf("($) ");
+		/*
+		* isatty()
+		* returns 1 if fd is an open file descriptor referring to a terminal;
+		* otherwise 0 is returned
+		*/
+		if (isatty(STDIN_FILENO))
+			printf("($) ");
+
 		bytes_read = getline(&str, &buffer_size, stdin);
 
 		if (bytes_read == -1)
 		{
-			perror("Error reading input");
+			/*printf("%u\n", getpid());*/
+			/*perror("Error reading input");*/
 			break;
 		}
 
@@ -99,7 +107,7 @@ void run(char *command, char *str, char *environ[])
 
 			if (newargv != NULL)
 			{
-				printf("%s\n", command);
+				/*printf("%s\n", command);*/
 				if (execve(command, newargv, environ) == -1)
 				{
 					perror("Error");
