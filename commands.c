@@ -1,6 +1,8 @@
 #include<string.h>
 #include<unistd.h>
 #include<stdio.h>
+#include<stdlib.h>
+#include "main.h"
 
 /**
  * pwd - print current working directory
@@ -28,12 +30,21 @@ void pwd(void)
 
 void cd(char *arg)
 {
-	if (chdir(arg) != -1)
+	char buf[1024];
+
+	if (strlen(arg) == 0)
+		chdir("~");
+	else if (chdir(arg) == -1)
+		fprintf(stderr, "cd: %s: No such file or directory\n", arg);
+
+	if (setenv("OLDPWD", getenv("PWD"), 1) != 0)
 	{
-		pwd();
+		perror("Failed to set OLDPWD");
 	}
-	else
+
+	getcwd(buf, sizeof(buf));
+	if (setenv("PWD", buf, 1) != 0)
 	{
-		perror("cd: Error");
+		perror("Failed to set OLDPWD");
 	}
 }

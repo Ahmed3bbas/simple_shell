@@ -41,15 +41,16 @@ int main(void)
 		if (str[bytes_read - 1] == '\n')
 			str[bytes_read - 1] = '\0';
 
-		if (strcmp(str, "exit") == 0)
-		{
-			free(str);
-			exit(EXIT_SUCCESS);
-		}
 		/* process input*/
 		str_copy = strdup(str);
-
 		command = strtok(str_copy, " ");
+
+		if (strcmp(command, "exit") == 0)
+		{
+			free(str);
+			free(str_copy);
+			exit(0); /* Exit state 0 for success state*/
+		}
 		if (strcmp(command, "pwd") == 0)
 		{
 			pwd();
