@@ -32,9 +32,12 @@ void cd(char *arg)
 {
 	char buf[1024];
 
-	if (strlen(arg) == 0)
-		chdir("~");
-	else if (chdir(arg) == -1)
+	if (arg == NULL)
+		arg = getenv("HOME");
+	else if (strcmp(arg, "-") == 0)
+		arg = getenv("OLDPWD");
+
+	if (chdir(arg) == -1)
 		fprintf(stderr, "cd: %s: No such file or directory\n", arg);
 
 	if (setenv("OLDPWD", getenv("PWD"), 1) != 0)
