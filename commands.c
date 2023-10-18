@@ -38,7 +38,10 @@ void cd(char *arg)
 		arg = getenv("OLDPWD");
 
 	if (chdir(arg) == -1)
+	{
 		fprintf(stderr, "cd: %s: No such file or directory\n", arg);
+		return;
+	}
 
 	if (setenv("OLDPWD", getenv("PWD"), 1) != 0)
 	{
