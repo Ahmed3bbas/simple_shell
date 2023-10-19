@@ -91,9 +91,34 @@ int main(void)
 			}
 			else
 			{
+				/*// printf("%s\n", arg);*/
 				state = atoi(arg);
-				free(str_copy);
-				exit(state);
+				/*// printf("%d\n", state);*/
+				if (*arg == '0' && state == 0)
+				{
+					free(str_copy);
+					exit(state);
+				}
+				else if (state < 0)
+				{
+					fprintf(stderr, "1: exit: Illegal number:%d\n", state);
+					free(str_copy);
+					state = 2;
+					exit(state);
+				}
+				else if (state == 0)
+				{
+					fprintf(stderr, "1: exit: Illegal number:%s\n", arg);
+					free(str_copy);
+					state = 2;
+					exit(state);
+				}
+				else
+				{
+					free(str_copy);
+					exit(state);
+
+				}
 			}
 		}
 		if (strcmp(command, "pwd") == 0)
@@ -161,7 +186,7 @@ int run(char *command, char *str, char *environ[])
 			if (newargv != NULL)
 			{
 				/*printf("%s\n", command_path);*/
-				if ((i = execve(command_path, newargv, environ)) == -1)
+				if (execve(command_path, newargv, environ) == -1)
 				{
 					perror("Error");
 					free(newargv);
@@ -204,7 +229,7 @@ int run(char *command, char *str, char *environ[])
 	{
 		fprintf(stderr, "Command '%s' not found\n", command_path);
 		free(command_path);
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	return (exit_status);
 
