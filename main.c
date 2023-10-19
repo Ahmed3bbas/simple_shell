@@ -14,7 +14,7 @@ int run(char *command, char *str, char *environ[]);
 
 int main(void)
 {
-	char str[1024], *command, *arg, *str_copy;
+	char str[7168], *command, *arg, *str_copy;
 	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
 	int i, j, state = EXIT_SUCCESS;
@@ -60,18 +60,26 @@ int main(void)
 		{
 			continue;
 		}
-		else
+		else if (str[0] == ' ')
 		{
 			/*Move string to the begining of spaces*/
 			/*printf("%ld\n", strlen(str));*/
 			j = 0;
 			while (str[i])
 			{
+				if (str[i - 1] == str[i] && str[i] == ' ')
+				{
+					i++;
+					continue;
+				}
 				str[j] = str[i];
 				i++;
 				j++;
 			}
-			str[j] = '\0';
+			if (str[j - 1] == ' ')
+				str[j - 1] = '\0';
+			else
+				str[j] = '\0';
 			/*printf("%ld\n", strlen(str));*/
 		}
 
@@ -101,14 +109,14 @@ int main(void)
 				}
 				else if (state < 0)
 				{
-					fprintf(stderr, "1: exit: Illegal number:%d\n", state);
+					fprintf(stderr, "exit: Illegal number:%d\n", state);
 					free(str_copy);
 					state = 2;
 					exit(state);
 				}
 				else if (state == 0)
 				{
-					fprintf(stderr, "1: exit: Illegal number:%s\n", arg);
+					fprintf(stderr, "exit: Illegal number:%s\n", arg);
 					free(str_copy);
 					state = 2;
 					exit(state);
