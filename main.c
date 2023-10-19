@@ -14,8 +14,8 @@ void run(char *command, char *str, char *environ[]);
 
 int main(void)
 {
-	char *str = NULL, *command, *arg, *str_copy;
-	size_t buffer_size = 0;
+	char str[1024], *command, *arg, *str_copy;
+	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
 	int i;
 
@@ -27,17 +27,27 @@ int main(void)
 		* otherwise 0 is returned
 		*/
 		if (isatty(STDIN_FILENO))
+		{
 			printf("($) ");
+		}
+		fflush(stdout);
 
-		bytes_read = getline(&str, &buffer_size, stdin);
+		bytes_read = _getline(str, sizeof(str), STDIN_FILENO);
+		/*getline(&str, &buffer_size, stdin);*/
 
 		if (bytes_read == -1)
 		{
+			perror("Error reading input");
 			/*printf("%u\n", getpid());*/
-			/*perror("Error reading input");*/
-			break;
+			exit(1);
+		}
+		else if (bytes_read == 0)
+		{
+			exit(0);
 		}
 
+		if (str[bytes_read - 1] == '\n' && bytes_read == 1)
+			continue;
 		if (str[bytes_read - 1] == '\n')
 			str[bytes_read - 1] = '\0';
 
@@ -47,7 +57,7 @@ int main(void)
 
 		if (strcmp(command, "exit") == 0)
 		{
-			free(str);
+			/*free(str);*/
 			free(str_copy);
 			exit(0); /* Exit state 0 for success state*/
 		}
@@ -77,7 +87,7 @@ int main(void)
 		}
 		free(str_copy);
 	}
-	free(str);
+	/*free(str);*/
 	return (0);
 }
 

@@ -7,5 +7,5 @@ char **get_args(char *str);
 int number_of_args(char *str);
 char **get_env_paths();
 int is_command_exist(char *filename, char **environ);
-
+int _getline(char *lineptr, size_t n, int stream);
 #endif
