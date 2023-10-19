@@ -237,7 +237,18 @@ int run(char *command, char *str, char *environ[])
 	{
 		fprintf(stderr, "Command '%s' not found\n", command_path);
 		free(command_path);
-		return (EXIT_FAILURE);
+		if (newargv != NULL)
+		{
+
+			i = 0;
+			while (newargv[i] != NULL)
+			{
+				free(newargv[i]);
+				i++;
+			}
+			free(newargv);
+		}
+		return (127); /* Exit status for not found command*/
 	}
 	return (exit_status);
 
