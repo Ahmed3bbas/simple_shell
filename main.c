@@ -17,7 +17,7 @@ int main(void)
 	char str[1024], *command, *arg, *str_copy;
 	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
-	int i;
+	int i, state = 0;
 
 	while (1)
 	{
@@ -58,8 +58,18 @@ int main(void)
 		if (strcmp(command, "exit") == 0)
 		{
 			/*free(str);*/
-			free(str_copy);
-			exit(0); /* Exit state 0 for success state*/
+			arg = strtok(NULL, " ");
+			if (arg == NULL)
+			{
+				free(str_copy);
+				exit(0); /* Exit state 0 for success state*/
+			}
+			else
+			{
+				state = atoi(arg);
+				free(str_copy);
+				exit(state);
+			}
 		}
 		if (strcmp(command, "pwd") == 0)
 		{
