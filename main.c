@@ -17,7 +17,7 @@ int main(void)
 	char str[1024], *command, *arg, *str_copy;
 	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
-	int i, state = 0;
+	int i, j, state = 0;
 
 	while (1)
 	{
@@ -51,9 +51,34 @@ int main(void)
 		if (str[bytes_read - 1] == '\n')
 			str[bytes_read - 1] = '\0';
 
+		/*Romove spaces*/
+		i = 0;
+		while (str[i] == ' ')
+			i += 1;
+
+		if (str[i] == '\0')
+		{
+			continue;
+		}
+		else
+		{
+			/*Move string to the begining of spaces*/
+			/*printf("%ld\n", strlen(str));*/
+			j = 0;
+			while (str[i])
+			{
+				str[j] = str[i];
+				i++;
+				j++;
+			}
+			str[j] = '\0';
+			/*printf("%ld\n", strlen(str));*/
+		}
+
 		/* process input*/
 		str_copy = strdup(str);
 		command = strtok(str_copy, " ");
+
 
 		if (strcmp(command, "exit") == 0)
 		{
