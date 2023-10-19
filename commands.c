@@ -35,20 +35,25 @@ void cd(char *arg)
 	if (arg == NULL)
 		arg = getenv("HOME");
 	else if (strcmp(arg, "-") == 0)
+	{
 		arg = getenv("OLDPWD");
-
+		if (arg == NULL)
+			arg = ".";
+	}
 	if (chdir(arg) == -1)
 	{
 		fprintf(stderr, "cd: %s: No such file or directory\n", arg);
 		return;
 	}
 
-	if (setenv("OLDPWD", getenv("PWD"), 1) != 0)
-	{
-		perror("Failed to set OLDPWD");
-	}
-
 	getcwd(buf, sizeof(buf));
+	if (strcmp(getenv("PWD"), buf) != 0)
+	{
+		if (setenv("OLDPWD", getenv("PWD"), 1) != 0)
+		{
+			perror("Failed to set OLDPWD");
+		}
+	}
 	if (setenv("PWD", buf, 1) != 0)
 	{
 		perror("Failed to set OLDPWD");
