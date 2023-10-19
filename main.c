@@ -5,7 +5,7 @@
 #include"main.h"
 #include<sys/wait.h>
 
-void run(char *command, char *str, char *environ[]);
+int run(char *command, char *str, char *environ[]);
 
 /**
  * main - simple shell
@@ -17,7 +17,7 @@ int main(void)
 	char str[1024], *command, *arg, *str_copy;
 	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
-	int i, j, state = 0;
+	int i, j, state = EXIT_SUCCESS;
 
 	while (1)
 	{
@@ -87,7 +87,7 @@ int main(void)
 			if (arg == NULL)
 			{
 				free(str_copy);
-				exit(0); /* Exit state 0 for success state*/
+				exit(state); /* Exit state 0 for success state*/
 			}
 			else
 			{
@@ -117,7 +117,7 @@ int main(void)
 		else
 		{
 
-			run(command, str, environ);
+			state = run(command, str, environ);
 
 		}
 		free(str_copy);
@@ -132,15 +132,16 @@ int main(void)
  * or if file exist in same directory or the path of file
  * @str: input string command + arguments
  * @environ: Enviroment variable
- * Return: void
+ * Return: exit status
 */
-void run(char *command, char *str, char *environ[])
+int run(char *command, char *str, char *environ[])
 {
 	pid_t pid;
 	int i;
 	char **newargv;
 	char *command_path;
 	const int MAX_PATH_LENGTH = 256;
+	int exit_status = 0;
 
 	newargv = get_args(str);
 	command_path = malloc(sizeof(char) * MAX_PATH_LENGTH);
@@ -160,7 +161,7 @@ void run(char *command, char *str, char *environ[])
 			if (newargv != NULL)
 			{
 				/*printf("%s\n", command_path);*/
-				if (execve(command_path, newargv, environ) == -1)
+				if ((i = execve(command_path, newargv, environ)) == -1)
 				{
 					perror("Error");
 					free(newargv);
@@ -177,6 +178,12 @@ void run(char *command, char *str, char *environ[])
 			int status;
 
 			waitpid(pid, &status, 0);
+			/*printf("%d", status);*/
+
+			if (WIFEXITED(status))
+			{
+				exit_status = WEXITSTATUS(status);
+			}
 
 			if (newargv != NULL)
 			{
@@ -190,11 +197,15 @@ void run(char *command, char *str, char *environ[])
 				free(newargv);
 			}
 			free(command_path);
+			return (exit_status);
 		}
 	}
 	else
 	{
 		fprintf(stderr, "Command '%s' not found\n", command_path);
 		free(command_path);
+		return(EXIT_FAILURE);
 	}
+	return (exit_status);
+
 }
