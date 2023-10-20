@@ -149,11 +149,11 @@ int main(void)
 		}
 		else if (strcmp(command, "setenv") == 0)
 		{
-			state = _setenv(str_copy);
+			state = _setenv();
 		}
 		else if (strcmp(command, "unsetenv") == 0)
 		{
-			state = _unsetenv(str_copy);
+			state = _unsetenv();
 		}
 		else
 		{
