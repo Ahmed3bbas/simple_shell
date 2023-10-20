@@ -64,9 +64,10 @@ void cd(char *arg)
  * _setenv - set variable or change it value in enviornment
  * Return: exit state if sucess return 0 else 1
 */
-int  _setenv(void)
+int  _setenv(char **env)
 {
-	char *key, *value;
+	char *key, *value, *concat;
+	int i = 0, flag = 0;
 
 	key = strtok(NULL, " ");
 	if (key == NULL)
@@ -82,11 +83,38 @@ int  _setenv(void)
 		return (EXIT_FAILURE);
 	}
 
-	if (setenv(key, value, 1) != 0)
+	while (env[i])
+	{
+		if (strncmp(env[i], key, strlen(key)) == 0)
+		{
+			concat = malloc(sizeof(char) * strlen(key) + strlen(value) + 2);
+			strcpy(concat, key);
+			strcat(concat, "=");
+			strcat(concat, value);
+			free(env[i]);
+			env[i] = concat;
+			flag = 1;
+			break;
+		}
+		i++;
+	}
+	if (flag == 0)
+	{
+		concat = malloc(sizeof(char) * strlen(key) + strlen(value) + 2);
+		strcpy(concat, key);
+		strcat(concat, "=");
+		strcat(concat, value);
+
+		env[i] = concat;
+		env[++i] = NULL;
+		/*free(concat);*/
+
+	}
+	/*if (setenv(key, value, 1) != 0)
 	{
 		fprintf(stderr, "Failed to set %s", key);
 		return (EXIT_FAILURE);
-	}
+	}*/
 	return (0);
 }
 
@@ -94,9 +122,10 @@ int  _setenv(void)
  * _unsetenv - unset variable from enviornment
  * Return: exit state if sucess return 0 else 1
 */
-int  _unsetenv(void)
+int  _unsetenv(char **env)
 {
-	char *key;
+	char *key, *temp;
+	int i = 0;
 
 	key = strtok(NULL, " ");
 	if (key == NULL)
@@ -105,10 +134,26 @@ int  _unsetenv(void)
 		return (EXIT_FAILURE);
 	}
 
-	if (unsetenv(key) != 0)
+	while (env[i])
+	{
+		if (strncmp(env[i], key, strlen(key)) == 0)
+		{
+			/*printf("%s\n", env[i]);*/
+			temp = env[i];
+			while (env[i] != NULL)
+			{
+				env[i] = env[i + 1];
+				i++;
+			}
+			env[i] = env[i + 1];
+			free(temp);
+		}
+		i++;
+	}
+	/*if (unsetenv(key) != 0)
 	{
 		fprintf(stderr, "Failed to unset %s", key);
 		return (EXIT_FAILURE);
-	}
+	}*/
 	return (0);
 }

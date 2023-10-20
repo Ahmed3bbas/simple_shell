@@ -6,7 +6,17 @@
 #include<sys/wait.h>
 
 int run(char *command, char *str, char *environ[]);
-
+void _freeenv(char **env)
+{
+	int i = 0;
+	while(env[i])
+	{
+		free(env[i]);
+		i++;
+	}
+	if (env != NULL)
+		free(env);
+}
 /**
  * main - simple shell
  * Return: 0 for succes state;
@@ -14,10 +24,27 @@ int run(char *command, char *str, char *environ[]);
 
 int main(void)
 {
-	char str[7168], *command, *arg, *str_copy;
+	char str[7168], *command, *arg, *str_copy, **new_env;
 	/*size_t buffer_size = 0;*/
 	ssize_t bytes_read;
 	int i, j, state = EXIT_SUCCESS;
+
+	i = 0;
+	while (environ[i])
+		i++;
+	new_env  = malloc((i + 10) * sizeof(char *));
+	if (new_env == NULL)
+	{
+		perror("malloc");
+		return (1);
+	}
+	i = 0;
+	while (environ[i])
+	{
+		new_env[i] = strdup(environ[i]);
+		i++;
+	}
+	new_env[i] = NULL;
 
 	while (1)
 	{
@@ -39,10 +66,12 @@ int main(void)
 		{
 			perror("Error reading input");
 			/*printf("%u\n", getpid());*/
+			_freeenv(new_env);
 			exit(1);
 		}
 		else if (bytes_read == 0)
 		{
+			_freeenv(new_env);
 			exit(0);
 		}
 
@@ -91,6 +120,7 @@ int main(void)
 		if (strcmp(command, "exit") == 0)
 		{
 			/*free(str);*/
+			_freeenv(new_env);
 			arg = strtok(NULL, " ");
 			if (arg == NULL)
 			{
@@ -141,28 +171,28 @@ int main(void)
 		else if (strcmp(command, "env") == 0)
 		{
 			i = 0;
-			while (environ[i])
+			while (new_env[i])
 			{
-				printf("%s\n", environ[i]);
+				printf("%s\n", new_env[i]);
 				i++;
 			}
 		}
 		else if (strcmp(command, "setenv") == 0)
 		{
-			state = _setenv();
+			state = _setenv(new_env);
 		}
 		else if (strcmp(command, "unsetenv") == 0)
 		{
-			state = _unsetenv();
+			state = _unsetenv(new_env);
 		}
 		else
 		{
-
-			state = run(command, str, environ);
-
+			state = run(command, str, new_env);
 		}
 		free(str_copy);
 	}
+	printf("asdasdas");
+	_freeenv(new_env);
 	/*free(str);*/
 	return (0);
 }
