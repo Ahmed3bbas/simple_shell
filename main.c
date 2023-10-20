@@ -6,10 +6,17 @@
 #include<sys/wait.h>
 
 int run(char *command, char *str, char *environ[]);
+
+/**
+ * _freeenv - free enviroment variable
+ * @env: array of string contains environment vairables
+ * Return: void
+*/
 void _freeenv(char **env)
 {
 	int i = 0;
-	while(env[i])
+
+	while (env[i])
 	{
 		free(env[i]);
 		i++;

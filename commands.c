@@ -62,6 +62,7 @@ void cd(char *arg)
 
 /**
  * _setenv - set variable or change it value in enviornment
+ * @env: array of string contains enviroment vairables
  * Return: exit state if sucess return 0 else 1
 */
 int  _setenv(char **env)
@@ -75,14 +76,12 @@ int  _setenv(char **env)
 		perror("You have to pass key and value");
 		return (EXIT_FAILURE);
 	}
-
 	value = strtok(NULL, " ");
 	if (value == NULL)
 	{
 		perror("You have to pass value");
 		return (EXIT_FAILURE);
 	}
-
 	while (env[i])
 	{
 		if (strncmp(env[i], key, strlen(key)) == 0)
@@ -104,22 +103,15 @@ int  _setenv(char **env)
 		strcpy(concat, key);
 		strcat(concat, "=");
 		strcat(concat, value);
-
 		env[i] = concat;
 		env[++i] = NULL;
-		/*free(concat);*/
-
 	}
-	/*if (setenv(key, value, 1) != 0)
-	{
-		fprintf(stderr, "Failed to set %s", key);
-		return (EXIT_FAILURE);
-	}*/
 	return (0);
 }
 
 /**
  * _unsetenv - unset variable from enviornment
+ * @env: array of string contains environment vairables
  * Return: exit state if sucess return 0 else 1
 */
 int  _unsetenv(char **env)
@@ -150,10 +142,5 @@ int  _unsetenv(char **env)
 		}
 		i++;
 	}
-	/*if (unsetenv(key) != 0)
-	{
-		fprintf(stderr, "Failed to unset %s", key);
-		return (EXIT_FAILURE);
-	}*/
 	return (0);
 }
