@@ -59,3 +59,56 @@ void cd(char *arg)
 		perror("Failed to set OLDPWD");
 	}
 }
+
+/**
+ * _setenv - set variable or change it value in enviornment
+ * Return: exit state if sucess return 0 else 1
+*/
+int  _setenv(void)
+{
+	char *key, *value;
+
+	key = strtok(NULL, " ");
+	if (key == NULL)
+	{
+		perror("You have to pass key and value");
+		return (EXIT_FAILURE);
+	}
+
+	value = strtok(NULL, " ");
+	if (value == NULL)
+	{
+		perror("You have to pass value");
+		return (EXIT_FAILURE);
+	}
+
+	if (setenv(key, value, 1) != 0)
+	{
+		fprintf(stderr, "Failed to set %s", key);
+		return (EXIT_FAILURE);
+	}
+	return (0);
+}
+
+/**
+ * _unsetenv - unset variable from enviornment
+ * Return: exit state if sucess return 0 else 1
+*/
+int  _unsetenv(void)
+{
+	char *key;
+
+	key = strtok(NULL, " ");
+	if (key == NULL)
+	{
+		perror("You have to pass key and value");
+		return (EXIT_FAILURE);
+	}
+
+	if (unsetenv(key) != 0)
+	{
+		fprintf(stderr, "Failed to unset %s", key);
+		return (EXIT_FAILURE);
+	}
+	return (0);
+}
